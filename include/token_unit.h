@@ -10,20 +10,46 @@
 namespace argon {
     class token_unit {
     public:
-        virtual bool matches(char *from, int current);
+        bool finished = false;
 
-        virtual bool takeover(char *from, int current);
+        virtual char type();
 
-        virtual bool completed(char *from, int next);
+        virtual bool matches(const char *from, int current);
+
+        virtual bool completed(const char *from, int next);
+
+        virtual bool takeover(const char *from, int next);
+
+        token_unit();
     };
 
     class int_token : public token_unit {
     public:
-        bool matches(char *from, int current) override;
+        char type() override;
 
-        bool takeover(char *from, int current) override;
+        bool matches(const char *from, int current) override;
 
-        bool completed(char *from, int next) override;
+        bool completed(const char *from, int next) override;
+    };
+
+    class decimal_token : public token_unit {
+    public:
+        char type() override;
+
+        bool matches(const char *from, int current) override;
+
+        bool completed(const char *from, int next) override;
+
+        bool takeover(const char *from, int next) override;
+    };
+
+    class identity_token : public token_unit {
+    public:
+        char type() override;
+
+        bool matches(const char *from, int current) override;
+
+        bool completed(const char *from, int next) override;
     };
 }
 

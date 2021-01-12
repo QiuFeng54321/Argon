@@ -7,9 +7,10 @@
 
 namespace argon {
     struct token {
-        long long index;
-        char* data;
+        int line, column;
+        const char* data;
         long long length;
+        char type;
     };
 }
 

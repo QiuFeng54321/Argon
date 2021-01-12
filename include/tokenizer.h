@@ -13,13 +13,21 @@ namespace argon {
     class tokenizer {
     protected:
         std::vector<token> tokens;
-        char *str;
-        char *current_offset;
-        int index = 0;
-    public:
-        static token_unit* token_units[];
+        const char *str;
+        int str_len;
+        int current_offset = 0;
+        int line = 1, column = 1;
 
-        tokenizer(char *str);
+        void skip_ws();
+
+        void forward();
+
+    public:
+        token eof_token(int l, int c), error_token(int l, int c);
+
+        static token_unit *token_units[];
+
+        tokenizer(const char *str, int str_len);
 
         token next_token();
     };
