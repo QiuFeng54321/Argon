@@ -11,7 +11,26 @@ namespace argon {
             new int_token,
             new decimal_token,
             new keyword_token(".", 1, '.'),
+            new keyword_token("(", 1, '('),
+            new keyword_token(")", 1, ')'),
+            new keyword_token("[", 1, '['),
+            new keyword_token("]", 1, ']'),
+            new keyword_token("{", 1, '{'),
+            new keyword_token("}", 1, '}'),
+            new keyword_token(">", 1, '>'),
+            new keyword_token("<", 1, '<'),
+            new keyword_token("=", 1, '='),
+            new keyword_token(",", 1, ','),
+            new keyword_token(";", 1, ';'),
+            new keyword_token(">=", 2, 'G'),
+            new keyword_token("<=", 2, 'L'),
+            new keyword_token("==", 2, '_'),
             new identity_token,
+            new keyword_token("func", 4, 'f'),
+            new keyword_token("return", 6, 'r'),
+            new keyword_token("if", 2, '?'),
+            new keyword_token("else", 4, '/'),
+            new keyword_token("class", 5, 'c'),
     };
 
     tokenizer::tokenizer(const char *str, int str_len) : str(str), str_len(str_len) {
@@ -80,7 +99,7 @@ namespace argon {
             // iterate over token_units to match
             for (auto& unit : token_units) {
                 if (unit->finished) continue;
-                if ((unit->last_match_result = unit->matches(data, index))) {
+                if (unit->matches(data, index)) {
                     if (unit->completed(data, index + 1)) {
                         type = unit->type();
                         unit->finished = true;

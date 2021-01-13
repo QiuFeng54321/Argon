@@ -12,8 +12,6 @@ namespace argon {
     public:
         // Every time the char is consumed, when it matches completely or doesn't match, this is set to true
         bool finished = false;
-        // This stores the result from matches(). completed() can use this
-        bool last_match_result = false;
 
         // Returns the type of this token represented as a char
         virtual char type();
@@ -40,7 +38,13 @@ namespace argon {
     };
 
     class decimal_token : public token_unit {
-        short count_dots(const char *from, int next);
+        unsigned short count_dots(const char *from, int next);
+
+        // This stores the result from completed(). next() can use this
+        unsigned short last_complete_result : 2 = 0;
+        bool last_matches = false;
+
+        bool use_last_complete = false;
 
     public:
         char type() override;
@@ -75,6 +79,8 @@ namespace argon {
         bool matches(const char *from, int current) override;
 
         bool completed(const char *from, int next) override;
+
+        bool takeover(const char *from, int next) override;
     };
 }
 

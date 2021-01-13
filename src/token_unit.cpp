@@ -26,6 +26,10 @@ namespace argon {
 
 
     bool int_token::matches(const char *from, int current) {
+//        if (use_last_complete) {
+//            use_last_complete = false;
+//            return not (bool)last_complete_result;
+//        }
         auto current_char = from[current];
         // 0x, 0b, 0o convention
         if (current == 2 and from[0] == '0') {
@@ -35,11 +39,14 @@ namespace argon {
     }
 
     bool int_token::completed(const char *from, int next) {
-        return not matches(from, next);
+        auto match = not matches(from, next);
+//        use_last_complete = true;
+//        last_complete_result = match;
+        return match;
     }
 
-    short decimal_token::count_dots(const char *from, int next) {
-        short count = 0;
+    unsigned short decimal_token::count_dots(const char *from, int next) {
+        unsigned short count = 0;
         for (int i = 0; i <= next; i++) {
             if (from[i] == '.') count++;
         }
@@ -53,10 +60,11 @@ namespace argon {
     }
 
     bool decimal_token::completed(const char *from, int next) {
+        auto dots = count_dots(from, next);
         // If the next char no longer matches and there is only one dot,
         //      or there are two dots next, it's finished
-        return not matches(from, next) and count_dots(from, next) == 1 or
-                                           count_dots(from, next) == 2;
+        return not matches(from, next) and dots == 1 or
+                                           dots == 2;
     }
 
     bool decimal_token::takeover(const char *from, int next) {
@@ -83,12 +91,12 @@ namespace argon {
                                                                                     data_len(data_len), _type(type) {}
 
     bool keyword_token::matches(const char *from, int current) {
-        return from[current] == match_data[current];
+        return from[current] == match_data[current] and current < data_len;
     }
 
     bool keyword_token::completed(const char *from, int next) {
-        return not matches(from, next);
+        return not matches(from, next) and next == data_len;
     }
-
+    bool keyword_token::takeover(const char *from, int next) {return matches(from, next);}
 
 }
