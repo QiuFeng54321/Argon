@@ -3,7 +3,6 @@
 //
 
 #include "tokenizer.h"
-#include <iostream>
 #include <string>
 
 namespace argon {
@@ -81,12 +80,8 @@ namespace argon {
             // iterate over token_units to match
             for (auto& unit : token_units) {
                 if (unit->finished) continue;
-//                std::cout << "Processing " << unit->type() << std::endl;
-                if (unit->matches(data, index)) {
+                if ((unit->last_match_result = unit->matches(data, index))) {
                     if (unit->completed(data, index + 1)) {
-                        // A token has matched completely
-//                        std::cout << unit->type() << " has completed at '" << std::string(data, index + 1) << "'"
-//                                  << std::endl;
                         type = unit->type();
                         unit->finished = true;
                         any_complete = true;

@@ -43,7 +43,6 @@ namespace argon {
         for (int i = 0; i <= next; i++) {
             if (from[i] == '.') count++;
         }
-//        std::cout << "Count: " << count << std::endl;
         return count;
     }
 
