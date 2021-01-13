@@ -33,6 +33,8 @@ namespace argon {
     };
 
     class decimal_token : public token_unit {
+        short count_dots(const char *from, int next);
+
     public:
         char type() override;
 
@@ -45,6 +47,22 @@ namespace argon {
 
     class identity_token : public token_unit {
     public:
+        char type() override;
+
+        bool matches(const char *from, int current) override;
+
+        bool completed(const char *from, int next) override;
+
+        bool takeover(const char *from, int next) override;
+    };
+
+    class keyword_token : public token_unit {
+        const char *match_data;
+        int data_len;
+        char _type;
+    public:
+        keyword_token(const char *match_data, int data_len, char type);
+
         char type() override;
 
         bool matches(const char *from, int current) override;

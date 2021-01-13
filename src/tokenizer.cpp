@@ -3,12 +3,15 @@
 //
 
 #include "tokenizer.h"
+#include <iostream>
+#include <string>
 
 namespace argon {
     token_unit *tokenizer::token_units[]{
             // Tokens that overlaps and needs takeover feature shall be placed after
             new int_token,
             new decimal_token,
+            new keyword_token(".", 1, '.'),
             new identity_token,
     };
 
@@ -17,7 +20,7 @@ namespace argon {
     }
 
     token tokenizer::eof_token(int l, int c) {
-        return token{l, c, new char(0), 0, '.'};
+        return token{l, c, new char(0), 0, '$'};
     }
 
     token tokenizer::error_token(int l, int c) {
@@ -39,7 +42,7 @@ namespace argon {
     void tokenizer::skip_ws() {
         while (current_offset < str_len) {
             const char *current = str + current_offset;
-            if ((*current) == ' ') {
+            if ((*current) == ' ' or (*current) == '\t') {
                 column++;
                 current_offset++;
             } else if ((*current) == '\n') {
@@ -78,10 +81,14 @@ namespace argon {
             // iterate over token_units to match
             for (auto& unit : token_units) {
                 if (unit->finished) continue;
+//                std::cout << "Processing " << unit->type() << std::endl;
                 if (unit->matches(data, index)) {
                     if (unit->completed(data, index + 1)) {
                         // A token has matched completely
+//                        std::cout << unit->type() << " has completed at '" << std::string(data, index + 1) << "'"
+//                                  << std::endl;
                         type = unit->type();
+                        unit->finished = true;
                         any_complete = true;
                     } else {
                         if (any_complete) {
